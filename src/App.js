@@ -1,6 +1,14 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+const a = `
+const a = 123;
+const b = 'qweqweq';
+
+/*<< shouldSplit >>*/
+const c = 'no';
+/*<< >>*/
+`;
 
 function App() {
   return (
