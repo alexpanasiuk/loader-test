@@ -6,6 +6,7 @@ module.exports = function(source) {
 
   try {
     const re = /\/\*<< (.*?) >>\*\/[\s]*(.*?)[\s]*\/\*<< >>\*\//;
+    let thisCodePointer = source;
 
     let hasSplitTags = true;
     while (hasSplitTags) {
@@ -16,10 +17,18 @@ module.exports = function(source) {
         const strLength = match[0].length;
         const envKey = match[1];
 
+        console.log(` ---- ---------------`);
+        console.log(` ---- ${process.env[envKey]} --------------`);
+        console.log(` ---- ---------------`);
+
+        thisCodePointer =
+          thisCodePointer.substring(0, index) +
+          thisCodePointer.substring(index + strLength);
+
         if (process.env[envKey]) {
-          source = source.substring(index, index + strLength);
-          hasSplitTags = true;
+          source = thisCodePointer;
         }
+        hasSplitTags = true;
       } else {
         hasSplitTags = false;
       }
