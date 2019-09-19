@@ -62,7 +62,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "loader": "shouldSplit=1 node src/loader/test.js",
+    "loader-false": "node src/loader/test.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -131,5 +133,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "html-loader": "^0.5.5"
   }
 }

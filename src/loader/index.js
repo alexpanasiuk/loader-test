@@ -1,46 +1,39 @@
-module.exports = function(source) {
+/**
+ * Custom loader designed to cut code inside special comment.
+ * Current comment syntax: /*<< CONDITION >>\*\/ SOURCE_CODE /*<< >>\*\/
+ *
+ * @param { String } source Source code or code from previous loader;
+ * @returns { String } Source code without content inside special comment if match condition.
+ */
+function loader(source) {
+  // Webpack cache function
   if (this.cacheable) {
     this.cacheable();
   }
-  // console.log('Custom loader');
-
   try {
-    const re = /\/\*<< (.*?) >>\*\/[\s]*(.*?)[\s]*\/\*<< >>\*\//;
-    let thisCodePointer = source;
+    // Regex for special comments
+    const re = /\/\*<< (.*?) >>\*\/(?:[\s]*(.*?)[\s]*)*?\/\*<< >>\*\//;
 
-    let hasSplitTags = true;
-    while (hasSplitTags) {
-      const match = re.exec(source);
+    source = source.replace(re, (match, p1, p2, offset) => {
+      const envKey = p1;
+      const content = p2;
 
-      if (match) {
-        const { index } = match;
-        const strLength = match[0].length;
-        const envKey = match[1];
+      // Uncomment to print matched code
+      // console.log(match);
 
-        console.log(` ---- ---------------`);
-        console.log(` ---- ${process.env[envKey]} --------------`);
-        console.log(` ---- ---------------`);
-
-        thisCodePointer =
-          thisCodePointer.substring(0, index) +
-          thisCodePointer.substring(index + strLength);
-
-        if (process.env[envKey]) {
-          source = thisCodePointer;
-        }
-        hasSplitTags = true;
-      } else {
-        hasSplitTags = false;
+      if (process.env[envKey] || envKey === '') {
+        return '';
       }
-    }
+      return match;
+    });
   } catch (e) {
-    console.log('Exception!!!');
+    console.log('=============================');
+    console.log('Exception inside cutom loader!');
     console.log(e);
+    console.log('=============================');
   }
 
-  console.log('============================');
-  console.log(source);
-  console.log('============================\n');
-
   return source;
-};
+}
+
+module.exports = loader;

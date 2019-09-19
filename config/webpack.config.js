@@ -327,6 +327,42 @@ module.exports = function(webpackEnv) {
           include: [paths.appHtml, paths.appSrc],
         },*/
 
+        // ==== js, css loader ====
+        {
+          test: /\.(js|mjs|jsx|ts|tsx|css|scss)$/,
+          enforce: 'pre',
+          use: [
+            {
+              loader: require.resolve(`${paths.appSrc}/loader`),
+            },
+          ],
+          include: paths.appSrc,
+        },
+
+        // ==== html loader ====
+        {
+          test: /\.(html|htm)$/,
+          enforce: 'pre',
+          use: [
+            {
+              loader: 'html-loader',
+              options: {
+                attrs: [':data-src'],
+                minimize: true,
+                removeComments: false,
+                collapseWhitespace: false,
+                minifyCSS: true,
+                minifyJS: true,
+                keepClosingSlash: true,
+              },
+            },
+            {
+              loader: require.resolve(`${paths.appSrc}/loader`),
+            },
+          ],
+          include: [paths.appHtml, paths.appSrc],
+        },
+
         // First, run the linter.
         // It's important to do this before Babel processes the JS.
         {
@@ -340,17 +376,6 @@ module.exports = function(webpackEnv) {
                 resolvePluginsRelativeTo: __dirname,
               },
               loader: require.resolve('eslint-loader'),
-            },
-          ],
-          include: paths.appSrc,
-        },
-        // ==== js loader ====
-        {
-          test: /\.(js|mjs|jsx|ts|tsx)$/,
-          enforce: 'pre',
-          use: [
-            {
-              loader: require.resolve(`${paths.appSrc}/loader`),
             },
           ],
           include: paths.appSrc,
@@ -527,7 +552,7 @@ module.exports = function(webpackEnv) {
           isEnvProduction
             ? {
                 minify: {
-                  removeComments: true,
+                  removeComments: false,
                   collapseWhitespace: true,
                   removeRedundantAttributes: true,
                   useShortDoctype: true,
